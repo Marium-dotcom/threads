@@ -24,6 +24,7 @@ function Topbar() {
                 />
               </div>
             </SignOutButton>
+            
           </SignedIn>
         </div>
 
@@ -35,7 +36,9 @@ function Topbar() {
             },
           }}
         />
+
       </div>
+      
     </nav>
   );
 }
