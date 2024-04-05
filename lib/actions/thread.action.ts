@@ -34,3 +34,44 @@ console.log(error);
 
   }
 }
+
+
+export async function getThreads(pageNumber=1,pageSize=10){
+  try {
+    connectToDB()
+
+    const skipAmount = (pageNumber - 1) * pageSize;
+
+   const postQuery =  Thread.find({ parentId: { $in: [null, undefined] } })
+    .sort({ createdAt: "desc" })
+    .skip(skipAmount)
+    .limit(pageSize)
+    .populate({
+      path: "author",
+      model: User,
+    }).populate({
+      path: "children", 
+      populate: {
+        path: "author",
+        model: User,
+        select: "_id name parentId image", 
+      },
+    });
+
+
+    const totalMainThreads = await Thread.countDocuments({
+    parentId: { $in: [null, undefined] },
+  }); 
+
+  const posts = await postQuery.exec();
+
+  const isNext = totalMainThreads > skipAmount + posts.length;
+
+  return { posts, isNext };
+
+
+  } catch (error) {
+   console.log(error);
+    
+  }
+}
