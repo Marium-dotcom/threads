@@ -80,7 +80,17 @@ export default function Account({user}:Props) {
      profile_picture: values.profile_picture,
      path: pathname
 }    )
+
+if(pathname === '/profile/edit'){
+  router.back()
+  
+}else{
+  router.push('/')
+}
+
   }
+
+
 
   function handleProfilePicture(    e: ChangeEvent<HTMLInputElement>,fieldChange: (value: string) => void) {
     e.preventDefault();

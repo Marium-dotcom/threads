@@ -1,4 +1,5 @@
 import Account from '@/components/forms/Account'
+import { fetchUser } from '@/lib/actions/user.actions';
 import { SignOutButton, SignedOut, currentUser } from '@clerk/nextjs'
 import { redirect } from 'next/navigation';
 import React from 'react'
@@ -8,14 +9,23 @@ export default async function Page() {
   const user = await currentUser()
   if (!user) return null; 
 
-  const userInfo = {
-    username: user.username , 
-    name:user.firstName,
-    bio:"bio",
-    profile_picture: user?.imageUrl,
+
+  const userInfo = await fetchUser(user.id)
+console.log("userInfo", userInfo);
+
+  const userData = {
+    id: user.id,
+    objectId: userInfo?._id?.toString(),
+    username: userInfo ? userInfo?.username : user.username,
+    name: userInfo ? userInfo?.name : user.firstName ,
+    bio: userInfo ? userInfo?.bio : "",
+    profile_picture: userInfo ? userInfo?.profile_picture : user.imageUrl,
 
   };
-  // if (userInfo?.onboarded) redirect("/");
+  console.log(userInfo?.onBoarded);
+  
+  // if (userInfo?.onBoarded) redirect("/");
+console.log(userInfo?._id);
 
   // const userData = {
   //   id: user.id || "",
@@ -38,7 +48,7 @@ console.log(user.username);
   </p>
 
   <section className='mt-9 bg-dark-2 p-10'>
-    <Account user={userInfo} btnTitle='Continue'  />
+    <Account user={userData} btnTitle='Continue'  />
   </section>
 </main>
 

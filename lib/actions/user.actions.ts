@@ -23,6 +23,8 @@ export async function updateUser(
 }: Params): Promise<void> {
 try {
     connectToDB()
+    console.log("backend update user");
+    
     await User.findOneAndUpdate({id: userId},
         {username: username.toLowerCase(),
             name,
@@ -38,4 +40,15 @@ try {
     console.log(error);
     
 }
+}
+
+
+export async function fetchUser(userId: string){
+    try {
+        connectToDB()
+        return await User.findOne({id: userId})
+    } catch (error) {
+        console.log(error);
+        
+    }
 }
