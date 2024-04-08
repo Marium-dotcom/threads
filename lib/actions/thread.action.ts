@@ -75,3 +75,19 @@ export async function getThreads(pageNumber=1,pageSize=10){
     
   }
 }
+
+
+export async function getThreadById(id: string){
+  connectToDB()
+
+  try {
+    const thread = await Thread.findById(id);
+console.log(thread);
+return thread;
+
+  } catch (error) {
+    
+  }
+
+
+}

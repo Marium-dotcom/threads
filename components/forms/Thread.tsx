@@ -53,7 +53,7 @@ export default function Threads({ userId }: Props) {
 
         console.log(values)
 
-        // router.push("/");
+        router.push("/");
 
     }
 
