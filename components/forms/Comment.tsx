@@ -29,12 +29,13 @@ import { addComment } from '@/lib/actions/thread.action';
 import { threadId } from 'worker_threads';
 interface Props {
     userId: string,
-    threadId: string;
+    threadId: string,
+    currentUserImg: string,
 }
 
 
 
-export default function Comment({ userId, threadId }: Props) {
+export default function Comment({ userId, threadId,currentUserImg }: Props) {
 
     const router = useRouter()
     const pathname = usePathname()
@@ -65,26 +66,36 @@ console.log(userId);
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-start gap-10">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex  justify-start gap-10">
 
 
-                <FormField
-                    control={form.control}
-                    name="thread"
-                    render={({ field }) => (
-                        <FormItem className='flex items-center gap-4'>
-                            {/* <FormLabel>thread</FormLabel> */}
-                            <FormControl>
-                                <Textarea
-                                    rows={2}
-                                    className='account-form_input no-focus'
-                                    placeholder="comment.." {...field} />
-                            </FormControl>
-                        </FormItem>
-                    )}
+            <FormField
+          control={form.control}
+          name='thread'
+          render={({ field }) => (
+            <FormItem className='flex w-full items-center gap-3'>
+              <FormLabel>
+                <Image
+                  src={currentUserImg}
+                  alt='current_user'
+                  width={48}
+                  height={48}
+                  className='rounded-full object-cover'
                 />
+              </FormLabel>
+              <FormControl className='border-none bg-transparent'>
+                <Input
+                  type='text'
+                  {...field}
+                  placeholder='Comment...'
+                  className='no-focus text-light-1 outline-none'
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-                <Button className='bg-primary-500' type="submit">comment</Button>
+                <Button className=' comment-form_btn' type="submit">comment</Button>
             </form>
         </Form>
     )

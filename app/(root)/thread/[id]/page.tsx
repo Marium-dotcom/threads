@@ -13,6 +13,8 @@ console.log("params", params.id);
 const post = await getThreadById(params.id)
 // console.log("get thread", thread);
 const current = await fetchUser(user.id)
+console.log("post thread", post);
+
   return (
     <div>         
              <ThreadCard
@@ -26,7 +28,24 @@ const current = await fetchUser(user.id)
     comments={post?.children}
   />
 <div className='mt-10'>
-  <Comment userId={current?._id.toString()} threadId={post?._id?.toString()}/>
+  <Comment currentUserImg={user?.imageUrl} userId={current?._id.toString()} threadId={post?._id?.toString()}/>
+  </div>
+
+  <div className='mt-10'>
+  {post.children.map((comnt: any) => (
+          <ThreadCard
+            key={comnt._id}
+            id={comnt._id}
+            currentUserId={user.id}
+            parentId={comnt.parentId}
+            content={comnt.text}
+            author={comnt.author}
+            createdAt={comnt.createdAt}
+            comments={comnt.children}
+            isComment
+          />
+        ))}
+
   </div>
 </div>
   )
