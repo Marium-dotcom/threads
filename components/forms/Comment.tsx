@@ -39,6 +39,7 @@ export default function Comment({ userId, threadId,currentUserImg }: Props) {
 
     const router = useRouter()
     const pathname = usePathname()
+console.log("userId: " + userId);
 
     const form = useForm({
         resolver: zodResolver(CommentValidation),

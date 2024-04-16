@@ -8,7 +8,7 @@ interface Props {
   content: string;
   author: {
     name: string;
-    image: string;
+    profile_picture: string;
     id: string;
   };
   createdAt: string;
@@ -30,13 +30,16 @@ export default function ThreadCard({
   comments,
   isComment
 }:Props) {
+
+  console.log("author: " + author.id);
+  
   return (
     <article className={`mt-5 flex w-full flex-col rounded-xl ${isComment? 'px-0 xs:px-5':'bg-dark-2' }  p-7`}>
       <div className=' flex items-start justify-between'>
         <div className=' flex w-full flex-1 flex-row gap-4'>
           <div className='flex flex-col items-center'>
             <Link href={`/profile/${author?.id}` } className='relative h-11 w-11'>
-              <Image src={author?.image || 'https://img.clerk.com/eyJ0eXBlIjoiZGVmYXVsdCIsImlpZCI6Imluc18yZUo2WmZDYmxsTEtiZ0s4NVZFUkxWeE5kWkYiLCJyaWQiOiJ1c2VyXzJlZWJPbEFobTNvU2lXNGFpa0YxU0NMaXBmViJ9'} alt='author image' fill className=' cursor-pointer rounded-full'/>
+              <Image src={author?.profile_picture || 'https://img.clerk.com/eyJ0eXBlIjoiZGVmYXVsdCIsImlpZCI6Imluc18yZUo2WmZDYmxsTEtiZ0s4NVZFUkxWeE5kWkYiLCJyaWQiOiJ1c2VyXzJlZWJPbEFobTNvU2lXNGFpa0YxU0NMaXBmViJ9'} alt='author image' fill className=' cursor-pointer rounded-full'/>
             </Link>
             <div  className='thread-card_bar'/>
 

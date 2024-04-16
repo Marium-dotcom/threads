@@ -14,6 +14,7 @@ const post = await getThreadById(params.id)
 // console.log("get thread", thread);
 const current = await fetchUser(user.id)
 console.log("post thread", post);
+console.log("current user", current);
 
   return (
     <div>         
@@ -28,7 +29,7 @@ console.log("post thread", post);
     comments={post?.children}
   />
 <div className='mt-10'>
-  <Comment currentUserImg={user?.imageUrl} userId={current?._id.toString()} threadId={post?._id?.toString()}/>
+  <Comment currentUserImg={current?.profile_picture} userId={current?._id.toString()} threadId={post?._id?.toString()}/>
   </div>
 
   <div className='mt-10'>
@@ -43,6 +44,7 @@ console.log("post thread", post);
             createdAt={comnt.createdAt}
             comments={comnt.children}
             isComment
+            // currentUserImg={current?.profile_picture} 
           />
         ))}
 

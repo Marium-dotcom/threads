@@ -21,28 +21,32 @@ import Image from 'next/image';
 import { Textarea } from '../ui/textarea';
 import { currentUser } from '@clerk/nextjs';
 import { isBase64Image } from '@/lib/utils';
-import { useUploadThing } from '@/lib/uploadthing';
+import { UploadButton } from '@/lib/uploadthing';
 import { updateUser } from '@/lib/actions/user.actions';
 import { usePathname, useRouter } from 'next/navigation';
 
-  interface Props {
-    user: {
-      id: string;
-      objectId: string;
-      username: string;
-      name: string;
-      bio: string;
-      profile_picture: string;
-    };
-    btnTitle: string;
-  }
+interface Props {
+  user: {
+    id: string;
+    objectId: string;
+    username: string;
+    name: string;
+    bio: string;
+    profile_picture: string;
+  };
+  btnTitle: string;
+}
 
-export default function Account({user}:Props) {
-  
+interface imgURL {
+  url: string;
+}
+
+export default function Account({ user }: Props) {
+
   const router = useRouter()
   const pathname = usePathname()
-  const [files, setFiles] = useState<File[]>([]);
-  const {startUpload} = useUploadThing("media")
+  const [files, setFiles] = useState<imgURL | undefined>();
+  console.log("Files: ", JSON.stringify(files?.url));
 
   const form = useForm({
     resolver: zodResolver(UserValidation),
@@ -56,61 +60,41 @@ export default function Account({user}:Props) {
   })
 
 
- async function onSubmit(values: z.infer<typeof UserValidation>) {
+        async function onSubmit(values: z.infer<typeof UserValidation>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     const blob = values.profile_picture
-    const checkPictureBase = isBase64Image(blob)
-    if (checkPictureBase){
-      const imgResponse = await startUpload(files)
-      if (imgResponse && imgResponse[0].url){
-        values.profile_picture = imgResponse[0].url
-      }
-    }
+    console.log("blob: " + blob);
     
+    // const checkPictureBase = isBase64Image(blob)
+    // if (checkPictureBase) {
 
-    console.log(values)
+    // }
 
+
+    console.log("values", values)
     await updateUser(
 
-{   userId: user.id,
-    username: values.username,
-     name: values.name,
-     bio: values.bio,
-     profile_picture: values.profile_picture,
-     path: pathname
-}    )
+      {
+        userId: user.id,
+        username: values.username,
+        name: values.name,
+        bio: values.bio,
+        profile_picture:   values.profile_picture,
+        path: pathname
+      })
 
-if(pathname === '/profile/edit'){
-  router.back()
-  
-}else{
-  router.push('/')
-}
+    if (pathname === '/profile/edit') {
+      router.back()
 
-  }
-
-
-
-  function handleProfilePicture(    e: ChangeEvent<HTMLInputElement>,fieldChange: (value: string) => void) {
-    e.preventDefault();
-
-    const fileReader = new FileReader();
-
-    if (e?.target?.files && e?.target?.files?.length > 0) {
-      const file = e.target.files[0];
-      setFiles(Array.from(e.target.files));
-
-      if (!file.type.includes("image")) return;
-
-      fileReader.onload = async (event) => {
-        const imageDataUrl = event.target?.result?.toString() || "";
-        fieldChange(imageDataUrl);
-      };
-
-      fileReader.readAsDataURL(file);
+    } else {
+      // router.push('/')
     }
+
   }
+
+
+
 
   return (
     <Form {...form}>
@@ -120,22 +104,37 @@ if(pathname === '/profile/edit'){
           name="profile_picture"
           render={({ field }) => (
             <FormItem className='flex items-center gap-4'>
-                            <FormLabel className='account-form_image-label'>
-{field.value ? (<Image src={field.value} alt='pp' width={96} height={96} priority className='rounded-full object-contain' />) : (<Image src={'/assets/profile.svg'} alt='pp' height={96} width={96} />)}
-</FormLabel>
+              <FormLabel className='account-form_image-label'>
+                {field.value ? (<Image src={field.value} alt='pp' width={96} height={96} priority className='rounded-full object-contain' />) : (<Image src={'/assets/profile.svg'} alt='pp' height={96} width={96} />)}
+              </FormLabel>
               <FormControl>
-                <Input
+                {/* <Input
                   type='file'
                   accept='image/*'
                   className='account-form_image-input'
                   placeholder="Upload"
-                  onChange={(e) => handleProfilePicture(e, field.onChange)}
-                  />
+                /> */}
+                <UploadButton
+                  className='account-form_image-input'
+                  endpoint="media"
+                  onClientUploadComplete={(res) => {
+                    console.log("Files: ", res);
+                    console.log("res", res[0].url);
+                    field.value = res[0].url
+                    setFiles({ url: res[0].url }); // Set the state with the correct type
+                    form.setValue('profile_picture', res[0].url); // Update the form field with the uploaded file URL
+                    console.log("form", form.getValues());
+                    
+                  }}
+                  onUploadError={(error: Error) => {
+                    alert(`ERROR! ${error.message}`);
+                  }}
+                />
               </FormControl>
             </FormItem>
           )}
-        />    
-            <FormField
+        />
+        <FormField
           control={form.control}
           name="username"
           render={({ field }) => (
@@ -151,7 +150,7 @@ if(pathname === '/profile/edit'){
             </FormItem>
           )}
         />
-            <FormField
+        <FormField
           control={form.control}
           name="name"
           render={({ field }) => (

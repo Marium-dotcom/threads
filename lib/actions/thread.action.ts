@@ -58,12 +58,14 @@ export async function getThreads(pageNumber=1,pageSize=10){
       },
     });
 
+// console.log("postQuery", postQuery);
 
     const totalMainThreads = await Thread.countDocuments({
     parentId: { $in: [null, undefined] },
   }); 
 
   const posts = await postQuery.exec();
+console.log("posts", posts[0].author);
 
   const isNext = totalMainThreads > skipAmount + posts.length;
 
@@ -81,17 +83,17 @@ export async function getThreadById(id: string){
   connectToDB()
 
   try {
-    const thread = await Thread.findById(id).populate({
+    const threadbyId = await Thread.findById(id).populate({
       path: "author",
       model: User,
-      select: "_id id name image",
+      select: "_id id name profile_picture",
     }).populate({
       path: "children", // Populate the children field
       populate: [
         {
           path: "author", // Populate the author field within children
           model: User,
-          select: "_id id name parentId image", // Select only _id and username fields of the author
+          select: "_id id name parentId profile_picture", // Select only _id and username fields of the author
         },
         {
           path: "children", // Populate the children field within children
@@ -105,8 +107,8 @@ export async function getThreadById(id: string){
       ],
     })
 
-console.log(thread);
-return thread;
+console.log("threadbyId", threadbyId);
+return threadbyId;
 
   } catch (error) {
     console.log(error);

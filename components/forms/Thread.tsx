@@ -19,10 +19,6 @@ import { Button } from '../ui/button';
 import { z } from "zod"
 import Image from 'next/image';
 import { Textarea } from '../ui/textarea';
-import { currentUser } from '@clerk/nextjs';
-import { isBase64Image } from '@/lib/utils';
-import { useUploadThing } from '@/lib/uploadthing';
-import { updateUser } from '@/lib/actions/user.actions';
 import { usePathname, useRouter } from 'next/navigation';
 import { ThreadValidation } from '@/lib/validations/thread';
 import { createThread } from '@/lib/actions/thread.action';
@@ -45,11 +41,13 @@ export default function Threads({ userId }: Props) {
         }
     })
 
+console.log("userId: " + userId);
 
     async function onSubmit(values: z.infer<typeof ThreadValidation>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         await createThread({ text: values.thread, author: userId, path: pathname })
+console.log("hello");
 
         console.log(values)
 
@@ -57,12 +55,23 @@ export default function Threads({ userId }: Props) {
 
     }
 
+ async   function hello(values: z.infer<typeof ThreadValidation>){
+    console.log(values)
+    await createThread({ text: values.thread, author: userId, path: pathname })
+    console.log("hello");
+    
+            console.log(values)
+    
+            router.push("/");
+    
+        console.log("hello")
+    }
 
 
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-start gap-10">
+            <form onSubmit={form.handleSubmit(hello)} className="flex flex-col justify-start gap-10">
 
 
                 <FormField
@@ -81,7 +90,7 @@ export default function Threads({ userId }: Props) {
                     )}
                 />
 
-                <Button className='bg-primary-500' type="submit">Submit</Button>
+                <Button  className='bg-primary-500' type='submit'>Submit</Button>
             </form>
         </Form>
     )
