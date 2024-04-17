@@ -25,7 +25,7 @@ export async function createThread(
 await posted.save()
 console.log("posted thread", posted);
 
-await User.findByIdAndUpdate(author, {$push:{text: posted}})
+await User.findByIdAndUpdate(author, {$push:{threads: posted}})
 
 revalidatePath(path);
 
