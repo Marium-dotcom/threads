@@ -7,7 +7,7 @@ export async function getNotifications(userId: string) {
       const notifications = await Notification.find({ userId }).populate({
         path: "senderId", // Populate the senderId field with user details
         model: User,
-        select: "_id name" // Select only necessary fields of the sender
+        select: "_id name profile_picture" // Select only necessary fields of the sender
       }).sort({ createdAt: "desc" }); // Sort notifications by creation date in descending order
   
       return notifications;

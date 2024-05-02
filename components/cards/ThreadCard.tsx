@@ -16,6 +16,8 @@ interface Props {
     profile_picture: string;
     id: string;
   };
+  likesBy: string[]
+
   createdAt: string;
   comments: {
     author: {
@@ -23,6 +25,7 @@ interface Props {
     };
   }[];
   isComment?: boolean;
+  checkLike?:boolean;
 }
 
 export default  function ThreadCard({
@@ -34,9 +37,12 @@ export default  function ThreadCard({
   author,
   createdAt,
   comments,
-  isComment
+  isComment,
+  likesBy,
+  checkLike
 }:Props) {
 
+console.log("checklikee from card", checkLike);
 
   return (
     <article className={`mt-5 flex w-full flex-col rounded-xl ${isComment? 'px-0 xs:px-5':'bg-dark-2' }  p-7`}>
@@ -58,7 +64,7 @@ export default  function ThreadCard({
                 <p className='mt-2 text-small-regular text-light-2'>{content}</p>
 <div className='mt-5 flex flex-col gap-3'>
   <div className='flex gap-3.5'>
-    <LikeBotton userId={userId.toString()} threadId={threadId.toString()} />
+    <LikeBotton userId={userId.toString()} threadId={threadId.toString() } likesBy={likesBy} checkLike={checkLike} />
     {/* <Image  onClick={handleLike} src={"/assets/heart-gray.svg"}  alt='like' width={24} height={24} className=' cursor-pointer object-contain  '/> */}
    <Link href={`/thread/${threadId}`}><Image src={"/assets/reply.svg"} alt='reply' width={24} height={24} className=' cursor-pointer object-contain'/></Link> 
     <Image src={"/assets/repost.svg"} alt='like' width={24} height={24} className=' cursor-pointer object-contain'/>
