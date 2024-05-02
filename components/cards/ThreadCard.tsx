@@ -1,9 +1,14 @@
+import { addLike } from '@/lib/actions/thread.action';
+import { fetchUser } from '@/lib/actions/user.actions';
+import { currentUser } from '@clerk/nextjs';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react'
+import LikeBotton from '../shared/LikeBotton';
 interface Props {
-  id: string;
+  threadId: string;
   currentUserId: string;
+  userId: string;
   parentId: string | null;
   content: string;
   author: {
@@ -20,9 +25,10 @@ interface Props {
   isComment?: boolean;
 }
 
-export default function ThreadCard({
-  id,
+export default  function ThreadCard({
+  threadId,
   currentUserId,
+  userId,
   parentId,
   content,
   author,
@@ -31,8 +37,7 @@ export default function ThreadCard({
   isComment
 }:Props) {
 
-  console.log("author: " + author.id);
-  
+
   return (
     <article className={`mt-5 flex w-full flex-col rounded-xl ${isComment? 'px-0 xs:px-5':'bg-dark-2' }  p-7`}>
       <div className=' flex items-start justify-between'>
@@ -53,8 +58,9 @@ export default function ThreadCard({
                 <p className='mt-2 text-small-regular text-light-2'>{content}</p>
 <div className='mt-5 flex flex-col gap-3'>
   <div className='flex gap-3.5'>
-    <Image src={"/assets/heart-gray.svg"} alt='like' width={24} height={24} className=' cursor-pointer object-contain'/>
-   <Link href={`/thread/${id}`}><Image src={"/assets/reply.svg"} alt='reply' width={24} height={24} className=' cursor-pointer object-contain'/></Link> 
+    <LikeBotton userId={userId.toString()} threadId={threadId.toString()} />
+    {/* <Image  onClick={handleLike} src={"/assets/heart-gray.svg"}  alt='like' width={24} height={24} className=' cursor-pointer object-contain  '/> */}
+   <Link href={`/thread/${threadId}`}><Image src={"/assets/reply.svg"} alt='reply' width={24} height={24} className=' cursor-pointer object-contain'/></Link> 
     <Image src={"/assets/repost.svg"} alt='like' width={24} height={24} className=' cursor-pointer object-contain'/>
     <Image src={"/assets/share.svg"} alt='like' width={24} height={24} className=' cursor-pointer object-contain'/>
   </div>

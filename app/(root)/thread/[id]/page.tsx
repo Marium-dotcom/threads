@@ -20,8 +20,9 @@ console.log("current user", current);
     <div>         
              <ThreadCard
     key={post?._id}
-    id={post?._id || ""} 
+    threadId={post?._id || ""} 
     currentUserId={user?.id || ""}
+    userId= {current?._id}
     parentId={post?.parentId}
     content={post?.text}
     author={post?.author}
@@ -33,10 +34,11 @@ console.log("current user", current);
   </div>
 
   <div className='mt-10'>
-  {post.children.map((comnt: any) => (
+  {post?.children?.map((comnt: any) => (
           <ThreadCard
             key={comnt._id}
-            id={comnt._id}
+            threadId={comnt._id}
+            userId= {current?._id}
             currentUserId={user.id}
             parentId={comnt.parentId}
             content={comnt.text}

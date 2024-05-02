@@ -4,6 +4,7 @@ import { connectToDB } from "../mongoose";
 import Thread from "../models/thread.model";
 import User from "../models/user.model";
 import { revalidatePath } from "next/cache";
+import Notification from "../models/notification.model";
 
 interface Params {
   text: string,
@@ -140,9 +141,25 @@ export async function addComment(threadId: string,userId: string,comment: string
     const text = new Thread({text: comment, author:userId, parentId: threadId})
     const saveComment = await text.save()
     console.log("text", text);
-    
+        // Populate the author field with the corresponding User document
+        await saveComment.populate("author", "name");
+
     originalThread.children.push(saveComment._id)
     await originalThread.save();
+   const userPop = await saveComment.populate("author", "name");
+console.log("userPop,userPop", userPop);
+
+        // Notify the user who owns the thread if it's not the same user adding the comment
+        if (originalThread.author.toString() !== userId) {
+          await Notification.create({
+            userId: originalThread.author,
+            type: "comment",
+            threadId: threadId,
+            senderId: userId,
+            message: `${userPop.author.name} commented on your thread: ${comment}`
+          });
+        }
+    
     revalidatePath(path);
 
   } catch (error) {
@@ -154,3 +171,54 @@ export async function addComment(threadId: string,userId: string,comment: string
 
 
 }
+
+
+export async function addLike(threadId: string, userId: string, path: string) {
+  try {
+    console.log("threadId", threadId);
+    console.log("userId", userId);
+    
+    // Connect to DB
+    // Check if the thread exists
+    const thread = await Thread.findById(threadId);
+    console.log("threadPopthread", thread);
+    
+    console.log("thread", thread);
+   
+    if (!thread) {
+      throw new Error("Thread not found");
+    }
+
+    // Check if the user has already liked the thread
+    if (thread.likesBy.includes(userId)) {
+      console.log("User has already liked this thread.");
+      return; // Exit function if user has already liked the thread
+    }
+
+    // Increment the likes
+    thread.likes += 1;
+    thread.likesBy.push(userId); // Add user to likesBy array to track users who liked the thread
+    await thread.save();
+
+    // Populate the author field to get user's name
+    // const threadPop = await thread.populate("author").execPopulate();
+
+    // Notify the user who owns the thread if it's not the same user liking the thread
+    if (thread.author.toString() !== userId) {
+      const user = await User.findById(userId);
+      await Notification.create({
+        userId: thread.author,
+        type: "like",
+        threadId: threadId,
+        senderId: userId,
+        message: `${user.name} liked your thread.`
+      });
+    }
+    
+    revalidatePath(path);
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+

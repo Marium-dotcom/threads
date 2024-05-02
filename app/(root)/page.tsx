@@ -1,5 +1,6 @@
 import ThreadCard from '@/components/cards/ThreadCard';
 import { getThreads } from '@/lib/actions/thread.action'
+import { fetchUser } from '@/lib/actions/user.actions';
 import { UserButton, currentUser } from '@clerk/nextjs'
 import React from 'react'
 
@@ -7,8 +8,9 @@ export default async function Page() {
 const user = await currentUser()
 if (!user) return null
   const threads = await getThreads()
+  const current = await fetchUser(user.id)
 
-  console.log(threads);
+  console.log(current._id);
   
   return (
     <>
@@ -21,8 +23,10 @@ if (!user) return null
             {threads?.posts?.map((post) => (
               <ThreadCard
                 key={post?._id}
-                id={post?._id || ""} 
+                threadId={post?._id || ""} 
                 currentUserId={user?.id || ""}
+                userId= {current?._id}
+
                 parentId={post?.parentId}
                 content={post?.text}
                 author={post?.author}
