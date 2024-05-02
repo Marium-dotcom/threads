@@ -1,21 +1,56 @@
 "use client"
-import { addLike } from '@/lib/actions/thread.action'
-import { currentUser } from '@clerk/nextjs'
-import Image from 'next/image'
-import { usePathname } from 'next/navigation'
-import React from 'react'
+import { useState, useEffect } from 'react';
+import { addLike, getThreadById } from '@/lib/actions/thread.action';
+import { currentUser } from '@clerk/nextjs';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import React from 'react';
+
 interface Props {
     threadId: string;
-    userId: string;}
-export default  function LikeBotton({threadId, userId}:Props) {
-    // const current = await currentUser()
-    // if (!current) return null;
-    // console.log(current.id);
-    const path = usePathname()
+    userId: string;
+}
 
-    async function handleLike (){  await addLike(threadId, userId, path)
+export default function LikeButton({ threadId, userId }: Props) {
+    const [likes, setLikes] = useState(0);
+    const [liked, setLiked] = useState(false);
+    const path = usePathname();
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const thread = await getThreadById(threadId);
+                console.log("thread", thread);
+                
+                
+                if (thread) {
+                    setLikes(thread.likes);
+                    setLiked(thread.likesBy.includes(userId));
+                }
+            } catch (error) {
+                console.error('Error fetching thread:', error);
+            }
+        }
+        fetchData(); // Call fetchData once when component mounts
+    }, []); // Empty dependency array ensures useEffect runs only once
+
+    async function handleLike() {
+        await addLike(threadId, userId, path);
+        setLiked(!liked);
+        setLikes(liked ? likes - 1 : likes + 1);
     }
-  return (
-    <Image  onClick={handleLike} src={"/assets/heart-gray.svg"}  alt='like' width={24} height={24} className=' cursor-pointer object-contain  '/>
-  )
+
+    return (
+        <div>
+            <Image
+                onClick={handleLike}
+                src={liked ? '/assets/heart-filled.svg' : '/assets/heart-gray.svg'}
+                alt='like'
+                width={24}
+                height={24}
+                className='cursor-pointer object-contain inline'
+            />
+            <span className=' text-purple-500'>{likes}</span>
+        </div>
+    );
 }

@@ -109,7 +109,7 @@ export async function getThreadById(id: string){
     })
 
 console.log("threadbyId", threadbyId);
-return threadbyId;
+return threadbyId.toObject(); 
 
   } catch (error) {
     console.log(error);
@@ -190,18 +190,18 @@ export async function addLike(threadId: string, userId: string, path: string) {
     }
 
     // Check if the user has already liked the thread
-    if (thread.likesBy.includes(userId)) {
-      console.log("User has already liked this thread.");
-      return; // Exit function if user has already liked the thread
+    const userIndex = thread.likesBy.indexOf(userId);
+    if (userIndex !== -1) {
+      // User has already liked the thread, so unlike it
+      thread.likes -= 1;
+      thread.likesBy.splice(userIndex, 1); // Remove user's ID from likesBy array
+    } else {
+      // User hasn't liked the thread, so like it
+      thread.likes += 1;
+      thread.likesBy.push(userId); // Add user's ID to likesBy array
     }
 
-    // Increment the likes
-    thread.likes += 1;
-    thread.likesBy.push(userId); // Add user to likesBy array to track users who liked the thread
     await thread.save();
-
-    // Populate the author field to get user's name
-    // const threadPop = await thread.populate("author").execPopulate();
 
     // Notify the user who owns the thread if it's not the same user liking the thread
     if (thread.author.toString() !== userId) {
@@ -211,7 +211,7 @@ export async function addLike(threadId: string, userId: string, path: string) {
         type: "like",
         threadId: threadId,
         senderId: userId,
-        message: `${user.name} liked your thread.`
+        message: `${user.name} ${userIndex !== -1 ? 'unliked' : 'liked'} your thread.`
       });
     }
     
