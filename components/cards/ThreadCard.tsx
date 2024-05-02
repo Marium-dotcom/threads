@@ -25,7 +25,7 @@ interface Props {
     };
   }[];
   isComment?: boolean;
-  checkLike?:boolean;
+  checkLike:boolean;
 }
 
 export default  function ThreadCard({
