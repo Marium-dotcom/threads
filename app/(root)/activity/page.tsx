@@ -9,8 +9,9 @@ export default async function Page() {
   const user = await currentUser()
   if (!user) return null
   const userInfo = await fetchUser(user.id)
+console.log("user info: ", userInfo._id);
 
- const activity = await getNotifications(userInfo._id)
+const activity = await getNotifications(userInfo._id)
 console.log("Notification", activity);
 
   return (

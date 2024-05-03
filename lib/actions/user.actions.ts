@@ -48,7 +48,8 @@ try {
 export async function fetchUser(userId: string){
     try {
         connectToDB()
-        return await User.findOne({id: userId})
+       const user = await User.findOne({id: userId})
+        return user
     } catch (error) {
         console.log(error);
         
