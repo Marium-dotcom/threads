@@ -22,6 +22,7 @@ import { Textarea } from '../ui/textarea';
 import { usePathname, useRouter } from 'next/navigation';
 import { ThreadValidation } from '@/lib/validations/thread';
 import { createThread } from '@/lib/actions/thread.action';
+import { useOrganization } from '@clerk/nextjs';
 interface Props {
     userId: string;
 }
@@ -29,6 +30,7 @@ interface Props {
 
 
 export default function Threads({ userId }: Props) {
+    const { organization } = useOrganization();
 
     const router = useRouter()
     const pathname = usePathname()
@@ -43,21 +45,10 @@ export default function Threads({ userId }: Props) {
 
 console.log("userId: " + userId);
 
-    async function onSubmit(values: z.infer<typeof ThreadValidation>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        await createThread({ text: values.thread, author: userId, path: pathname })
-console.log("hello");
-
-        console.log(values)
-
-        router.push("/");
-
-    }
 
  async   function hello(values: z.infer<typeof ThreadValidation>){
     console.log(values)
-    await createThread({ text: values.thread, author: userId, path: pathname })
+    await createThread({ text: values.thread, author: userId, path: pathname, community: organization ? organization.id : null})
     console.log("hello");
     
             console.log(values)

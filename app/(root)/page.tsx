@@ -36,8 +36,9 @@ if (!user) return null
                 content={post?.text}
                 author={post?.author}
                 createdAt={post?.createdAt}
-                comments={post?.children}
+                // comments={post?.children}
                 likesBy={post?.likesBy}
+                community={post?.community}
                 checkLike={post?.likesBy.includes(id)}
           
 

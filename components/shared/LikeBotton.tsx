@@ -52,7 +52,7 @@ export default function LikeButton({ threadId, userId ,likesBy ,checkLike}: Prop
                 height={24}
                 className='cursor-pointer object-contain inline'
             />
-            <span className=' text-purple-500'>{likesBy.length}</span>
+            <span className=' text-purple-500'>{likesBy?.length}</span>
         </div>
     );
 }

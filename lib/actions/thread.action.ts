@@ -5,28 +5,47 @@ import Thread from "../models/thread.model";
 import User from "../models/user.model";
 import { revalidatePath } from "next/cache";
 import Notification from "../models/notification.model";
+import Community from "../models/community.model";
 
 interface Params {
   text: string,
   author: string,
   path: string,
+  community: string | null,
+
 }
 
 
 export async function createThread(
   { text,
     author, 
-    path
+    path,
+    community
     }: Params ): Promise<void> {
   try {
      connectToDB()
-    console.log("text: " + text, "author" + author + " path: " + path);
+    console.log("text: " + text, "author" + author + " path: " + path + "community: " + community);
     
-    const posted = await Thread.create({ text, author })
+    const communityObject = await Community.findOne(
+      { id: community },
+      { _id: 1 }
+    );
+
+    const posted = await Thread.create({
+      text,
+      author,
+      community: communityObject, // Assign community if provided, or leave it null for personal account
+    });
 await posted.save()
 console.log("posted thread", posted);
 
 await User.findByIdAndUpdate(author, {$push:{threads: posted}})
+
+if (communityObject) {
+  await Community.findByIdAndUpdate(communityObject, {
+    $push: { threads: posted._id },
+  });
+}
 
 revalidatePath(path);
 
@@ -57,7 +76,11 @@ export async function getThreads(pageNumber=1,pageSize=10){
         model: User,
         select: "_id name parentId image", 
       },
-    });
+    })    .populate({
+      path: "community",
+      model: Community,
+    })
+;
 
 // console.log("postQuery", postQuery);
 
@@ -88,6 +111,9 @@ export async function getThreadById(id: string){
       path: "author",
       model: User,
       select: "_id id name profile_picture",
+    })   .populate({
+      path: "community",
+      model: Community,
     }).populate({
       path: "children", // Populate the children field
       populate: [

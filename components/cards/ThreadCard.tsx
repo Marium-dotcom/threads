@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react'
 import LikeBotton from '../shared/LikeBotton';
+import { formatDateString } from '@/lib/utils';
 interface Props {
   threadId: string;
   currentUserId: string;
@@ -19,13 +20,12 @@ interface Props {
   likesBy: string[]
 
   createdAt: string;
-  comments: {
-    author: {
-      image: string;
-    };
-  }[];
   isComment?: boolean;
   checkLike:boolean;
+  community: {
+    id: string;
+    name: string;
+  } | null;
 }
 
 export default  function ThreadCard({
@@ -36,10 +36,10 @@ export default  function ThreadCard({
   content,
   author,
   createdAt,
-  comments,
   isComment,
   likesBy,
-  checkLike
+  checkLike,
+  community
 }:Props) {
 
 console.log("checklikee from card", checkLike);
@@ -75,6 +75,26 @@ console.log("checklikee from card", checkLike);
         </div>
       </div>
       {/* <h2 className=' text-small-regular text-light-2 '>{content}</h2> */}
+      {!isComment && community && (
+        <Link
+          href={`/communities/${community.id}`}
+          className='mt-5 flex items-center'
+        >
+          <p className='text-subtle-medium text-gray-1'>
+            {formatDateString(createdAt)}
+            {community && ` - ${community.name} Community`}
+          </p>
+
+          <Image
+            src={"https://img.clerk.com/eyJ0eXBlIjoiZGVmYXVsdCIsImlpZCI6Imluc18yZUo2WmZDYmxsTEtiZ0s4NVZFUkxWeE5kWkYiLCJyaWQiOiJvcmdfMmZ4akRJVkllcmxYbUw5ZUFlUmlsNEczSnVlIiwiaW5pdGlhbHMiOiJNIn0?width=160"}
+            alt={community.name}
+            width={14}
+            height={14}
+            className='ml-1 rounded-full object-cover'
+          />
+        </Link>
+      )}
+
     </article>
   )
 }

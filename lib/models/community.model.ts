@@ -14,7 +14,7 @@ const communitySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  profile_picture: String,
+  image: String,
   bio: String,
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
