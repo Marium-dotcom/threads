@@ -88,7 +88,7 @@ export default function Account({ user }: Props) {
       router.back()
 
     } else {
-      // router.push('/')
+      router.push('/')
     }
 
   }
