@@ -9,8 +9,8 @@ const user = await currentUser()
 if (!user) return null
   const threads = await getThreads()
   const current = await fetchUser(user.id)
-  const id = current._id
-  console.log(current._id);
+  const id = current?._id
+  console.log(current?._id);
   // const checkLike:any = threads?.posts.map(e => e.likesBy.includes(id))
   // console.log("checkLike", checkLike);
   // const isLiked = checkLike?.find((e:any) => e === id )

@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from 'react'
 import { profileTabs } from '@/constants';
 import Image from 'next/image';
+import ThreadsTab from '@/components/shared/ThreadsTab';
 
 export default async function Page({params}:{params:{id:string}}) {
   const user = await currentUser()
@@ -44,15 +45,20 @@ if (!userInfo?.onboarded === false) redirect("/");
 
           </TabsTrigger>))}
         </TabsList>
-        {/* {profileTabs.map((e)=>
-        (
-                      <TabsContent
-                      key={`content-${e.label}`}
-                      value={e.value}
-                      className='w-full text-light-1'
-                    />
-                  ))
-                    } */}
+        {profileTabs.map((tab) => (
+            <TabsContent
+              key={`content-${tab.label}`}
+              value={tab.value}
+              className='w-full text-light-1'
+            >
+              {/* @ts-ignore */}
+              <ThreadsTab
+                currentUserId={user.id}
+                accountId={userInfo._id}
+                accountType='User'
+              />
+            </TabsContent>
+          ))}
       </Tabs>
     </div>
     </div>

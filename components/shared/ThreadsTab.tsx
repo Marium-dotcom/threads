@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import ThreadCard from "../cards/ThreadCard";
 import { fetchCommunityPosts, fetchCommunities, fetchCommunityDetails } from "@/lib/actions/community.action";
 import { getThreadById } from "@/lib/actions/thread.action";
-import { fetchUser } from "@/lib/actions/user.actions";
+import { fetchUser, fetchUserPosts } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 
 interface Result {
@@ -41,12 +41,13 @@ async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
     if (accountType === "Community") {
         result = await fetchCommunityPosts(accountId);
     } else {
-        result = await getThreadById(accountId);
+        result = await fetchUserPosts(accountId);
     }
+console.log("result: " + result);
 
-    if (!result) {
-        redirect("/");
-    }
+//     if (!result) {
+// console.log("account iddd", accountId);
+//     }
 const user = await currentUser()
 if (!user) return null
 
@@ -55,7 +56,7 @@ if (!user) return null
 
     return (
         <section className='mt-9 flex flex-col gap-10'>
-            {result.threads.map((post) => (
+            {result?.threads?.map((post) => (
                 <ThreadCard
                 key={post?._id}
                 threadId={post?._id || ""} 
@@ -64,12 +65,12 @@ if (!user) return null
 
                 parentId={post?.parentId}
                 content={post?.text}
-                author={            accountType === "User"
-                ? { name: result.name, profile_picture: result.profile_picture, id: result.id }
+                author={accountType === "User"
+                ? { name: result?.name, profile_picture: result?.profile_picture, id: result?.id }
                 : {
-                    name: post.author.name,
-                    profile_picture: post.author.profile_picture,
-                    id: post.author.id,
+                    name: post?.author?.name,
+                    profile_picture: post?.author?.profile_picture,
+                    id: post?.author.id,
                   }
   }
                 createdAt={post?.createdAt}

@@ -10,13 +10,13 @@ interface Props {
   name: string;
   username: string;
   profilePic: string;
-//   personType: string;
+  personType: string;
 }
 
-function UserCard({ id, name, username, profilePic }: Props) {
+function UserCard({ id, name, username, profilePic , personType}: Props) {
   const router = useRouter();
 
-//   const isCommunity = personType === "Community";
+  const isCommunity = personType === "Community";
 
   return (
     <article className='user-card'>
@@ -39,11 +39,11 @@ function UserCard({ id, name, username, profilePic }: Props) {
       <Button
         className='user-card_btn'
         onClick={() => {
-        //   if (isCommunity) {
-        //     router.push(`/communities/${id}`);
-        //   } else {
+          if (isCommunity) {
+            router.push(`/communities/${id}`);
+          } else {
             router.push(`/profile/${id}`);
-        //   }
+          }
         }}
       >
         View
