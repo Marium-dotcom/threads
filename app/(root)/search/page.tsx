@@ -27,7 +27,7 @@ console.log("Search", searched);
                 name={users.name}
                 username={users.username}
                 profilePic={users.profile_picture}
-                // personType='User'
+                personType='User'
               />
             ))}
 

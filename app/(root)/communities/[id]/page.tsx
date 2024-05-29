@@ -68,7 +68,7 @@ async function Page({ params }: { params: { id: string } }) {
                                     name={member.name}
                                     username={member.username}
                                     profilePic={member.profile_picture}
-                                //   personType='User'
+                                  personType='User'
                                 />
                             ))}
                         </section>
